@@ -406,7 +406,7 @@ func (ctx *context) handleTarget(targetPath string, target BuildInterface) {
 		},
 	})
 
-	if runIface, ok := target.(RunInterface); ok {
+	if _, ok := target.(RunInterface); ok {
 		deps := []string{}
 		if extendedRunIface, ok := target.(ExtendedRunInterface); ok {
 			depsPaths := extendedRunIface.RunDeps()
@@ -419,14 +419,14 @@ func (ctx *context) handleTarget(targetPath string, target BuildInterface) {
 			Target: fmt.Sprintf("%s#run", targetPath),
 			Ins:    append(deps, targetPath),
 			Variables: map[string]string{
-				"command":     runIface.Run(input.RunArgs),
-				"description": fmt.Sprintf("Running %s:", targetPath),
+				"command":     "true",
+				"description": fmt.Sprintf("RunDeps %s:", targetPath),
 				"pool":        "console",
 			},
 		})
 	}
 
-	if testIface, ok := target.(TestInterface); ok {
+	if _, ok := target.(TestInterface); ok {
 		deps := []string{}
 		if extendedTestIface, ok := target.(ExtendedTestInterface); ok {
 			depsPaths := extendedTestIface.TestDeps()
@@ -439,8 +439,8 @@ func (ctx *context) handleTarget(targetPath string, target BuildInterface) {
 			Target: fmt.Sprintf("%s#test", targetPath),
 			Ins:    append(deps, targetPath),
 			Variables: map[string]string{
-				"command":     testIface.Test(input.TestArgs),
-				"description": fmt.Sprintf("Testing %s:", targetPath),
+				"command":     "true",
+				"description": fmt.Sprintf("TestDeps %s:", targetPath),
 				"pool":        "console",
 			},
 		})

@@ -30,6 +30,8 @@ type targetInfo struct {
 	Testable    bool
 	Report      bool
 	Selected    bool
+	RunCommand  string
+	TestCommand string
 }
 
 type generatorInput struct {
@@ -144,11 +146,13 @@ func GeneratorMain(vars map[string]interface{}) {
 		if descriptionIface, ok := variable.(descriptionInterface); ok {
 			info.Description = descriptionIface.Description()
 		}
-		if _, ok := variable.(RunInterface); ok {
+		if r, ok := variable.(RunInterface); ok {
 			info.Runnable = true
+			info.RunCommand = r.Run(input.RunArgs)
 		}
-		if _, ok := variable.(TestInterface); ok {
+		if r, ok := variable.(TestInterface); ok {
 			info.Testable = true
+			info.TestCommand = r.Test(input.RunArgs)
 		}
 		if _, ok := variable.(ReportInterface); ok {
 			info.Report = true
